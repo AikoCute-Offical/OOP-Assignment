@@ -1,119 +1,148 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-// Create default 4 phones with their information
+//Create 4 default phones.
 struct Phone {
-    char name[20];
-    char model[20];
-    int price;
-    int year;
+    char Code [20];
+    char Name [50];
+    float Price[20];
+    char ManuFacturer[20];
 };
 
-// Add new phones
-void addPhone(Phone *phones, int &n) {
-    printf("Enter name: ");
-    scanf("%s", phones[n].name);
-    printf("Enter model: ");
-    scanf("%s", phones[n].model);
-    printf("Enter price: ");
-    scanf("%d", &phones[n].price);
-    printf("Enter year: ");
-    scanf("%d", &phones[n].year);
-    n++;
+// Add new phones.
+void AddPhone(struct Phone *p, int *n) {
+    printf("Enter the code of the phone: ");
+    scanf("%s", p[*n].Code);
+    printf("Enter the name of the phone: ");
+    scanf("%s", p[*n].Name);
+    printf("Enter the price of the phone: ");
+    scanf("%f", &p[*n].Price);
+    printf("Enter the manufacturer of the phone: ");
+    scanf("%s", p[*n].ManuFacturer);
+    *n = *n + 1;
 }
 
-// Search phone by name
-void searchPhone(Phone *phones, int n) {
-    char name[20];
-    printf("Enter name: ");
+// Display all phones.
+void DisplayPhone(struct Phone *p, int n) {
+    int i;
+    for (i = 0; i < n; i++) {
+        printf("Code: %s - Name: %s - Price: %f - Manufacturer: %s \n", p[i].Code, p[i].Name, p[i].Price, p[i].ManuFacturer);
+    }
+}
+
+// Search for a phone by name.
+
+void SearchPhone(struct Phone *p, int n) {
+    char name[50];
+    int i;
+    printf("Enter the name of the phone: ");
     scanf("%s", name);
-    for (int i = 0; i < n; i++) {
-        if (strcmp(phones[i].name, name) == 0) {
-            printf("Name: %s Model: %s Price: %d Year: %d \r ", phones[i].name, phones[i].model, phones[i].price, phones[i].year);
+    for (i = 0; i < n; i++) {
+        if (strcmp(p[i].Name, name) == 0) {
+            printf("Code: %s - Name: %s - Price: %f - Manufacturer: %s \n", p[i].Code, p[i].Name, p[i].Price, p[i].ManuFacturer);
         }
     }
 }
 
-// List all phones
-void listPhones(Phone *phones, int n) {
-    for (int i = 0; i < n; i++) {
-        printf("Name: %s Model: %s Price: %d Year: %d \r ", phones[i].name, phones[i].model, phones[i].price, phones[i].year);
-    }
-}
+// Display sorted phones by name (the original list did not change)
 
-// List all phones after sorting by phone name
-void sortPhones(Phone *phones, int n) {
-    for (int i = 0; i < n; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (strcmp(phones[i].name, phones[j].name) > 0) {
-                Phone temp = phones[i];
-                phones[i] = phones[j];
-                phones[j] = temp;
+void SortPhone(struct Phone *p, int n) {
+    int i, j;
+    struct Phone temp;
+    for (i = 0; i < n - 1; i++) {
+        for (j = i + 1; j < n; j++) {
+            if (strcmp(p[i].Name, p[j].Name) > 0) {
+                temp = p[i];
+                p[i] = p[j];
+                p[j] = temp;
             }
         }
     }
-    listPhones(phones, n);
+    DisplayPhone(p, n);
 }
 
-// Save all phones to a files
-void savePhones(Phone *phones, int n) {
-    FILE *f = fopen("phones.txt", "w");
-    for (int i = 0; i < n; i++) {
-        fprintf(f, "%s %s %d %d \r ", phones[i].name, phones[i].model, phones[i].price, phones[i].year);
+// Save all phones to file “dataP.txt”
+
+void SavePhone(struct Phone *p, int n) {
+    FILE *f;
+    f = fopen("dataP.txt", "w");
+    int i;
+    for (i = 0; i < n; i++) {
+        fprintf(f, "%s %s %f %s \n", p[i].Code, p[i].Name, p[i].Price, p[i].ManuFacturer);
     }
     fclose(f);
 }
 
+// Load all phones from file “dataP.txt”
+
+void LoadPhone(struct Phone *p, int *n) {
+    FILE *f;
+    f = fopen("dataP.txt", "r");
+    while (!feof(f)) {
+        fscanf(f, "%s %s %f %s \n", p[*n].Code, p[*n].Name, &p[*n].Price, p[*n].ManuFacturer);
+        *n = *n + 1;
+    }
+    fclose(f);
+}
+
+// Main function.
+
 int main() {
-    Phone phones[100];
+    struct Phone p[100];
     int n = 4;
-    strcpy(phones[0].name, "Samsung");
-    strcpy(phones[0].model, "Galaxy S10");
-    phones[0].price = 1000;
-    phones[0].year = 2019;
-    strcpy(phones[1].name, "Apple");
-    strcpy(phones[1].model, "Iphone 11");
-    phones[1].price = 1200;
-    phones[1].year = 2019;
-    strcpy(phones[2].name, "Xiaomi");
-    strcpy(phones[2].model, "Mi 9");
-    phones[2].price = 800;
-    phones[2].year = 2019;
-    strcpy(phones[3].name, "Huawei");
-    strcpy(phones[3].model, "P30");
-    phones[3].price = 900;
-    phones[3].year = 2019;
     int choice;
+    strcpy(p[0].Code, "P01");
+    strcpy(p[0].Name, "Iphone");
+    p[0].Price = 1000;
+    strcpy(p[0].ManuFacturer, "Apple");
+    strcpy(p[1].Code, "P02");
+    strcpy(p[1].Name, "Samsung");
+    p[1].Price = 900;
+    strcpy(p[1].ManuFacturer, "Samsung");
+    strcpy(p[2].Code, "P03");
+    strcpy(p[2].Name, "Nokia");
+    p[2].Price = 800;
+    strcpy(p[2].ManuFacturer, "Nokia");
+    strcpy(p[3].Code, "P04");
+    strcpy(p[3].Name, "Oppo");
+    p[3].Price = 700;
+    strcpy(p[3].ManuFacturer, "Oppo");
     do {
-        printf("1. Add new phone \r ");
-        printf("2. Search phone \r ");
-        printf("3. List all phones \r ");
-        printf("4. List all phones after sorting by phone name \r ");
-        printf("5. Save all phones to a file \r ");
-        printf("6. Exit \r ");
+        printf(" 1. Add new phone \n");
+        printf(" 2. Display all phones \n");
+        printf(" 3. Search for a phone by name \n");
+        printf(" 4. Display sorted phones by name \n");
+        printf(" 5. Save all phones to file “dataP.txt” \n");
+        printf(" 6. Load all phones from file “dataP.txt” \n");
+        printf(" 7. Exit \n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
         switch (choice) {
             case 1:
-                addPhone(phones, n);
+                AddPhone(p, &n);
                 break;
             case 2:
-                searchPhone(phones, n);
+                DisplayPhone(p, n);
                 break;
             case 3:
-                listPhones(phones, n);
+                SearchPhone(p, n);
                 break;
             case 4:
-                sortPhones(phones, n);
+                SortPhone(p, n);
                 break;
             case 5:
-                savePhones(phones, n);
+                SavePhone(p, n);
                 break;
             case 6:
-                printf("Goodbye! \r ");
+                LoadPhone(p, &n);
+                break;
+            case 7:
+                printf("Goodbye! \n");
                 break;
             default:
-                printf("No choice! \r ");
+                printf("No choice! \n");
         }
-    } while (choice != 6);
+    } while (choice != 7);
     return 0;
 }
